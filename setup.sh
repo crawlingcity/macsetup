@@ -39,14 +39,11 @@ brew install wget
 brew install mackup
 brew install node
 
-
-#@TODO install our custom fonts and stuff
-
 echo "Cleaning up brew"
 brew cleanup
 
-echo "Installing homebrew cask"
-brew install caskroom/cask/brew-cask
+echo "Upgrading Brew"
+brew upgrade
 
 echo "Copying dotfiles from Github"
 cd ~
@@ -76,31 +73,54 @@ echo "Setting up bash_aliases..."
 cd  ~
 curl https://raw.githubusercontent.com/crawlingcity/macsetup/master/bash_aliases > .bash_aliases
 
+echo "Ignoring line endings"
+git config --global core.autocrlf true
+
+# Web Server
+echo "Setting up web server..."
+brew tap homebrew/php
+brew update
+brew install dnsmasq
+echo 'address=/.test/127.0.0.1' > /usr/local/etc/dnsmasq.conf
+sudo brew services start dnsmasq
+sudo mkdir -v /etc/resolver
+sudo apachectl stop
+sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist 2>/dev/null
+brew install httpd
+sudo brew services start httpd
+
 # Apps
 apps=(
   alfred
   bartender
-  bettertouchtool
-  cleanmymac
   dropbox
   filezilla
   firefox
   google-chrome
   phpstorm
-  spotify
-  vagrant
   iterm2
   atom
   vlc
   skype
-  1password
   sequel-pro
 )
 
 # Install apps to /Applications
 # Default is: /Users/$user/Applications
 echo "installing apps with Cask..."
-brew cask install --appdir="/Applications" ${apps[@]}
+brew cask install --appdir="/Applications" ${apps[@]} --force
+
+crawlingapps=(
+  1password
+  spotify
+)
+
+read -p "Do you want to install crawling apps? (y/n) " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    brew cask install --appdir="/Applications" ${crawlingapps[@]} --force
+fi
 
 brew cask alfred link
 
@@ -206,7 +226,7 @@ sudo pmset -a sms 0
 sudo pmset -a standbydelay 86400
 
 #"Disable annoying backswipe in Chrome"
-defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
+defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool true
 
 #"Setting screenshots location to ~/Desktop"
 defaults write com.apple.screencapture location -string "$HOME/Desktop"
@@ -244,14 +264,14 @@ defaults write com.apple.Safari "com.apple.Safari.ContentPageGroupIdentifier.Web
 defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 
 #"Disable 'natural' (Lion-style) scrolling"
-defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+defaults write NSGlobalDomain com.apple.swipescrolldirection -bool true
 
 # Don’t automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false
 
-
-
 killall Finder
 
+echo "Running Doctor"
+brew Doctor
 
 echo "Done! Please close your terminal to refresh the new settings"
