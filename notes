@@ -1,0 +1,21 @@
+site que usei para saber como por o apache que queremos
+
+https://getgrav.org/blog/macos-sierra-apache-multiple-php-versions
+
+localhost nao funciona:
+
+como resolver:
+
+restart ao apache (os outros restarts nao funcionam, nao sei pq, este funciona):
+sudo /usr/sbin/apachectl restart
+
+ficheiros apache2
+https://github.com/crawlingcity/macsetup/tree/master
+
+o que consegui?
+
+locahost responde como forbidden -> chmod 777 -R /Users/crawling/web-apps
+
+depois de editar o httpd-vhosts.conf ja consegui abrir o site
+
+ideal: tornar isto automatico como no windows/ubuntu
