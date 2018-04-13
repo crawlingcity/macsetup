@@ -19,8 +19,9 @@ fi
 echo "Updating homebrew..."
 brew update
 
-echo "Installing Git..."
+echo "Installing Git and composer..."
 brew install git
+brew install composer
 
 echo "Git config"
 
@@ -38,6 +39,9 @@ brew install tree
 brew install wget
 brew install mackup
 brew install node
+
+echo "Installing docker..."
+brew cask install docker
 
 echo "Cleaning up brew"
 brew cleanup
